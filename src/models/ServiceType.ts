@@ -7,22 +7,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('providers')
-class Provider {
+@Entity('service_types')
+class ServiceType {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  name: string;
-
-  @Column()
-  email: string;
-
-  @Column()
-  password: string;
-
-  @Column()
-  status: string;
+  service_name: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -31,4 +22,4 @@ class Provider {
   updated_at: Date;
 }
 
-export default Provider;
+export default ServiceType;
