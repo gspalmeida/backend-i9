@@ -12,6 +12,9 @@ class Provider {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true })
+  avatar: string;
+
   @Column()
   name: string;
 
@@ -22,7 +25,7 @@ class Provider {
   password: string;
 
   @Column()
-  status: string;
+  aprovalStatus: boolean;
 
   @CreateDateColumn()
   created_at: Date;
