@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 import { Router } from 'express';
 
-import AuthenticateAdminService from '../services/AuthenticateAdminService';
+import AuthenticateProviderService from '../services/AuthenticateProviderService';
 
-interface AdminWithoutPassword {
+interface ProviderWithoutPassword {
   email: string;
   password?: string;
 }
@@ -13,18 +13,18 @@ const authRouter = Router();
 authRouter.post('/', async (request, response) => {
   const { email, password } = request.body;
 
-  const authenticateAdmin = new AuthenticateAdminService();
+  const authenticateProvider = new AuthenticateProviderService();
 
-  const { admin, token } = await authenticateAdmin.execute({
+  const { provider, token } = await authenticateProvider.execute({
     email,
     password,
   });
 
-  const parsedAdmin: AdminWithoutPassword = admin;
+  const parsedProvider: ProviderWithoutPassword = provider;
 
-  delete parsedAdmin.password;
+  delete parsedProvider.password;
 
-  return response.json({ parsedAdmin, token });
+  return response.json({ parsedProvider, token });
 });
 
 export default authRouter;

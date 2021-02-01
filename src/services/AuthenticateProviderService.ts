@@ -2,7 +2,7 @@
 import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import Admin from '../models/Admin';
+import Provider from '../models/Provider';
 import authConfig from '../config/auth';
 import AppError from '../errors/AppError';
 
@@ -11,20 +11,20 @@ interface Request {
   password: string;
 }
 interface Response {
-  admin: Admin;
+  provider: Provider;
   token: string;
 }
 
-class AuthenticateAdminService {
+class AuthenticateProviderService {
   public async execute({ email, password }: Request): Promise<Response> {
-    const adminRepository = getRepository(Admin);
+    const providerRepository = getRepository(Provider);
 
-    const admin = await adminRepository.findOne({ where: { email } });
-    if (!admin) {
+    const provider = await providerRepository.findOne({ where: { email } });
+    if (!provider) {
       throw new AppError('Incorrect email/password combination', 401);
     }
 
-    const passwordMatched = await compare(password, admin.password);
+    const passwordMatched = await compare(password, provider.password);
 
     if (!passwordMatched) {
       throw new AppError('Incorrect email/password combination', 401);
@@ -33,15 +33,15 @@ class AuthenticateAdminService {
     const { secret, expiresIn } = authConfig.jwt;
 
     const token = sign({}, secret, {
-      subject: admin.id,
+      subject: provider.id,
       expiresIn,
     });
 
     return {
-      admin,
+      provider,
       token,
     };
   }
 }
 
-export default AuthenticateAdminService;
+export default AuthenticateProviderService;
