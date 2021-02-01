@@ -19,6 +19,9 @@ class ProvidedService {
   @Column()
   service_type: string;
 
+  @Column()
+  name: string;
+
   @ManyToOne(() => ServiceType)
   @JoinColumn({ name: 'service_type' })
   service: ServiceType;
@@ -30,11 +33,14 @@ class ProvidedService {
   @JoinColumn({ name: 'provider_id' })
   provider: Provider;
 
-  @Column({ type: 'money' })
-  velue: number;
+  @Column()
+  value: string;
 
   @Column()
   description: string;
+
+  @Column()
+  due_date: string;
 
   @CreateDateColumn()
   created_at: Date;
