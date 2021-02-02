@@ -98,3 +98,15 @@ providersRouter.put('/:id', ensureAuthenticated, async (request, response) => {
 
   response.json(service);
 });
+
+providersRouter.delete(
+  '/:id',
+  ensureAuthenticated,
+  async (request, response) => {
+    const { id } = request.params;
+    const serviceRepository = getRepository(ProvidedService);
+
+    await serviceRepository.delete(id);
+    response.sendStatus(200);
+  },
+);
