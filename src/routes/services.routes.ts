@@ -21,6 +21,7 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
 
   services = await serviceRepository.find({
     where: { provider_id: request.user.id },
+    relations: ['service'],
   });
 
   if (parsedStartDate && parsedEndDate) {
