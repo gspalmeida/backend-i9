@@ -6,6 +6,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ProvidedService from '../models/ProvidedService';
 
 import CreateProvidedServiceService from '../services/CreateProvidedServiceService';
+import EditProvidedServiceService from '../services/EditProvidedServiceService';
 
 const providersRouter = Router();
 
@@ -79,3 +80,21 @@ providersRouter.post('/', ensureAuthenticated, async (request, response) => {
   return response.json(service);
 });
 export default providersRouter;
+
+providersRouter.put('/:id', ensureAuthenticated, async (request, response) => {
+  const { name, description, value, type, dueDate } = request.body;
+  const { id } = request.params;
+
+  const EditService = new EditProvidedServiceService();
+
+  const service = await EditService.execute({
+    id,
+    name,
+    description,
+    value,
+    type,
+    dueDate,
+  });
+
+  response.json(service);
+});
