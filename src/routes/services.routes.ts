@@ -11,27 +11,32 @@ const providersRouter = Router();
 
 providersRouter.get('/', ensureAuthenticated, async (request, response) => {
   let services = [];
+  let parsedStartDate = '';
+  let parsedEndDate = '';
+  let parsedDueDate = '';
   const serviceRepository = getRepository(ProvidedService);
 
   const { startDate, endDate } = request.query;
-
-  let parsedStartDate = String(startDate);
-  let parsedEndDate = String(endDate);
-  let parsedDueDate = '';
 
   services = await serviceRepository.find({
     where: { provider_id: request.user.id },
     relations: ['service'],
   });
 
-  if (parsedStartDate && parsedEndDate) {
+  if (startDate && endDate) {
+    parsedStartDate = String(startDate);
+    parsedEndDate = String(endDate);
     parsedStartDate = parsedStartDate.split('/').reverse().join('-');
     parsedEndDate = parsedEndDate.split('/').reverse().join('-');
     parsedStartDate = moment(parsedStartDate).format('YYYYMMDD');
     parsedEndDate = moment(parsedEndDate).format('YYYYMMDD');
 
     services = services.filter(service => {
-      parsedDueDate = moment(service.due_date).format('YYYYMMDD');
+      console.error(service.due_date);
+      parsedDueDate = moment(
+        service.due_date.split('/').reverse().join('-'),
+      ).format('YYYYMMDD');
+      console.error(parsedDueDate);
       if (
         Number(moment(service.created_at).format('YYYYMMDD')) >=
           Number(parsedStartDate) &&
