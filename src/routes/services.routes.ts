@@ -54,6 +54,10 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
 providersRouter.post('/', ensureAuthenticated, async (request, response) => {
   const { name, description, value, type, dueDate } = request.body;
 
+  console.log('\n\n\n\n\n\n\n\n\n\n------------------------------------\n');
+  console.log(request.body);
+  console.log('\n\n\n\n\n\n\n\n\n\n------------------------------------\n');
+
   const createService = new CreateProvidedServiceService();
 
   const service = await createService.execute({

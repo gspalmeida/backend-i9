@@ -30,6 +30,11 @@ class CreateProviderService {
       where: { service_name: type },
     });
 
+    console.log(checkServiceTypeExists?.id);
+    console.log(checkServiceTypeExists?.id);
+    console.log(checkServiceTypeExists?.id);
+    console.log(checkServiceTypeExists?.id);
+
     if (!checkServiceTypeExists) {
       throw new AppError('Unexpected Service Type');
     }
@@ -42,6 +47,7 @@ class CreateProviderService {
       provider_id: providerId,
       value,
     });
+    console.log('depois do serv');
 
     await serviceRepository.save(service);
 
