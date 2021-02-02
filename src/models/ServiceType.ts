@@ -5,7 +5,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
+import ProvidedService from './ProvidedService';
 
 @Entity('service_types')
 class ServiceType {
@@ -14,6 +17,16 @@ class ServiceType {
 
   @Column()
   service_name: string;
+
+  @OneToMany(
+    () => ProvidedService,
+    providedService => providedService.service,
+    {
+      eager: true,
+    },
+  )
+  @JoinColumn({ name: 'service_name' })
+  provided_service: ProvidedService[];
 
   @CreateDateColumn()
   created_at: Date;

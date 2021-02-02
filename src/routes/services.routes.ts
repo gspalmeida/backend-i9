@@ -13,6 +13,7 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
 
   const services = await serviceRepository.find({
     where: { provider_id: request.user.id },
+    relations: ['service'],
   });
 
   return response.json(services);
