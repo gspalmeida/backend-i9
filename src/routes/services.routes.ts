@@ -18,6 +18,7 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
 
   const { startDate, endDate } = request.query;
 
+  console.log(request.query);
   services = await serviceRepository.find({
     where: { provider_id: request.user.id },
     relations: ['service'],
@@ -32,17 +33,23 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
     parsedEndDate = moment(parsedEndDate).format('YYYYMMDD');
 
     services = services.filter(service => {
-      console.error(service.due_date);
       parsedDueDate = moment(
         service.due_date.split('/').reverse().join('-'),
       ).format('YYYYMMDD');
-      console.error(parsedDueDate);
       if (
         Number(moment(service.created_at).format('YYYYMMDD')) >=
           Number(parsedStartDate) &&
         Number(moment(parsedDueDate).format('YYYYMMDD')) <=
           Number(parsedEndDate)
       ) {
+        console.log('salvou');
+        console.log(Number(moment(service.created_at).format('YYYYMMDD')));
+        console.log('>=');
+        console.log(Number(parsedStartDate));
+        console.log('&&');
+        console.log(Number(moment(parsedDueDate).format('YYYYMMDD')));
+        console.log('>=');
+        console.log(Number(parsedEndDate));
         return true;
       }
       return false;
