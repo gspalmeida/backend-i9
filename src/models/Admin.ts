@@ -12,6 +12,9 @@ class Admin {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true })
+  avatar: string;
+
   @Column()
   name: string;
 
