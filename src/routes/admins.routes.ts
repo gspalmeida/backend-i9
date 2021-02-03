@@ -2,14 +2,18 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { getRepository } from 'typeorm';
+import moment from 'moment';
 import uploadConfig from '../config/upload';
 
 import ServiceType from '../models/ServiceType';
+import ProvidedService from '../models/ProvidedService';
+
+import serviceTypesRouter from './serviceTypes.routes';
+import servicesRouter from './services.routes';
 
 import CreateAdminService from '../services/CreateAdminService';
 import CreateServiceTypeService from '../services/CreateServiceType';
 import UpdateServiceTypeService from '../services/UpdateServiceTypeService';
-import serviceTypesRouter from './serviceTypes.routes';
 
 interface AdminWithoutPassword {
   name: string;
@@ -21,6 +25,46 @@ const adminsRouter = Router();
 const upload = multer(uploadConfig);
 
 adminsRouter.use('/servicetypes', serviceTypesRouter);
+adminsRouter.use('/services', servicesRouter);
+
+servicesRouter.get('/all', async (request, response) => {
+  let services = [];
+  let parsedStartDate = '';
+  let parsedEndDate = '';
+  let parsedDueDate = '';
+  const serviceRepository = getRepository(ProvidedService);
+
+  const { startDate, endDate } = request.query;
+
+  services = await serviceRepository.find({
+    relations: ['service'],
+  });
+
+  if (startDate && endDate) {
+    parsedStartDate = String(startDate);
+    parsedEndDate = String(endDate);
+    parsedStartDate = parsedStartDate.split('/').reverse().join('-');
+    parsedEndDate = parsedEndDate.split('/').reverse().join('-');
+    parsedStartDate = moment(parsedStartDate).format('YYYYMMDD');
+    parsedEndDate = moment(parsedEndDate).format('YYYYMMDD');
+
+    services = services.filter(service => {
+      parsedDueDate = moment(
+        service.due_date.split('/').reverse().join('-'),
+      ).format('YYYYMMDD');
+      if (
+        Number(moment(service.created_at).format('YYYYMMDD')) >=
+          Number(parsedStartDate) &&
+        Number(moment(parsedDueDate).format('YYYYMMDD')) <=
+          Number(parsedEndDate)
+      ) {
+        return true;
+      }
+      return false;
+    });
+  }
+  return response.json(services);
+});
 
 serviceTypesRouter.post('/', async (request, response) => {
   const { serviceName } = request.body;
