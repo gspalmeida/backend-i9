@@ -14,25 +14,28 @@ interface AdminWithoutPassword {
 const adminsRouter = Router();
 const upload = multer(uploadConfig);
 
-adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
-  let avatar = '';
-  const { name, email, password } = request.body;
-  if (request.file) {
-    console.log(request.file.filename);
-    avatar = request.file.filename;
-  }
+adminsRouter.post(
+  '/hashedTempUrl',
+  upload.single('avatar'),
+  async (request, response) => {
+    let avatar = '';
+    const { name, email, password } = request.body;
+    if (request.file) {
+      avatar = request.file.filename;
+    }
 
-  const createAdmin = new CreateAdminService();
+    const createAdmin = new CreateAdminService();
 
-  const provider: AdminWithoutPassword = await createAdmin.execute({
-    name,
-    email,
-    password,
-    avatar,
-  });
+    const admin: AdminWithoutPassword = await createAdmin.execute({
+      name,
+      email,
+      password,
+      avatar,
+    });
 
-  delete provider.password;
+    delete admin.password;
 
-  return response.json(provider);
-});
+    return response.json(admin);
+  },
+);
 export default adminsRouter;
