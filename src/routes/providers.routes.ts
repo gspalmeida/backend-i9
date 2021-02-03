@@ -21,7 +21,6 @@ providersRouter.post(
     let avatar = '';
     const { name, email, password } = request.body;
     if (request.file) {
-      console.log(request.file.filename);
       avatar = request.file.filename;
     }
 
