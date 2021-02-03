@@ -22,11 +22,13 @@ class ServiceType {
     () => ProvidedService,
     providedService => providedService.service,
     {
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE',
       eager: true,
     },
   )
   @JoinColumn({ name: 'service_name' })
-  provided_service: ProvidedService[];
+  provided_services: ProvidedService[];
 
   @CreateDateColumn()
   created_at: Date;
