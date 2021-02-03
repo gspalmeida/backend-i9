@@ -28,11 +28,7 @@ class CreateProviderService {
     }
 
     const hashedPassword = await hash(password, 8);
-    /*
-      TODO Adicionar o upload de avatar à tela SignUp no front para então
-      adicionar esse campo ao service de criação de provider (já está criado no
-      model e no database, falta criar no front e adicionar ao service)
-    */
+
     const provider = providerRepository.create({
       name,
       email,

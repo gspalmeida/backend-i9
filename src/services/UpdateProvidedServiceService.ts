@@ -12,7 +12,7 @@ interface Request {
   type: string;
   dueDate: string;
 }
-class EditProvidedServiceService {
+class UpdateProvidedServiceService {
   public async execute({
     id,
     name,
@@ -51,4 +51,4 @@ class EditProvidedServiceService {
     return service;
   }
 }
-export default EditProvidedServiceService;
+export default UpdateProvidedServiceService;

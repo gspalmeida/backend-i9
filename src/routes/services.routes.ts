@@ -6,7 +6,7 @@ import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import ProvidedService from '../models/ProvidedService';
 
 import CreateProvidedServiceService from '../services/CreateProvidedServiceService';
-import EditProvidedServiceService from '../services/EditProvidedServiceService';
+import UpdateProvidedServiceService from '../services/UpdateProvidedServiceService';
 
 const providersRouter = Router();
 
@@ -85,7 +85,7 @@ providersRouter.put('/:id', ensureAuthenticated, async (request, response) => {
   const { name, description, value, type, dueDate } = request.body;
   const { id } = request.params;
 
-  const EditService = new EditProvidedServiceService();
+  const EditService = new UpdateProvidedServiceService();
 
   const service = await EditService.execute({
     id,

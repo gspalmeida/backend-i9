@@ -20,8 +20,6 @@ providersRouter.post(
   async (request, response) => {
     let avatar = '';
     const { name, email, password } = request.body;
-    console.error(request.body);
-
     if (request.file) {
       console.log(request.file.filename);
       avatar = request.file.filename;
