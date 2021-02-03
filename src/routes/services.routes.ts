@@ -8,9 +8,9 @@ import ProvidedService from '../models/ProvidedService';
 import CreateProvidedServiceService from '../services/CreateProvidedServiceService';
 import UpdateProvidedServiceService from '../services/UpdateProvidedServiceService';
 
-const providersRouter = Router();
+const servicesRouter = Router();
 
-providersRouter.get('/', ensureAuthenticated, async (request, response) => {
+servicesRouter.get('/', ensureAuthenticated, async (request, response) => {
   let services = [];
   let parsedStartDate = '';
   let parsedEndDate = '';
@@ -42,14 +42,6 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
         Number(moment(parsedDueDate).format('YYYYMMDD')) <=
           Number(parsedEndDate)
       ) {
-        console.log('salvou');
-        console.log(Number(moment(service.created_at).format('YYYYMMDD')));
-        console.log('>=');
-        console.log(Number(parsedStartDate));
-        console.log('&&');
-        console.log(Number(moment(parsedDueDate).format('YYYYMMDD')));
-        console.log('>=');
-        console.log(Number(parsedEndDate));
         return true;
       }
       return false;
@@ -58,13 +50,8 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
   return response.json(services);
 });
 
-providersRouter.post('/', ensureAuthenticated, async (request, response) => {
+servicesRouter.post('/', ensureAuthenticated, async (request, response) => {
   const { name, description, value, type, dueDate } = request.body;
-
-  console.log('\n\n\n\n\n\n\n\n\n\n------------------------------------\n');
-  console.log(request.body);
-  console.log('\n\n\n\n\n\n\n\n\n\n------------------------------------\n');
-
   const createService = new CreateProvidedServiceService();
 
   const service = await createService.execute({
@@ -78,9 +65,9 @@ providersRouter.post('/', ensureAuthenticated, async (request, response) => {
 
   return response.json(service);
 });
-export default providersRouter;
+export default servicesRouter;
 
-providersRouter.put('/:id', ensureAuthenticated, async (request, response) => {
+servicesRouter.put('/:id', ensureAuthenticated, async (request, response) => {
   const { name, description, value, type, dueDate } = request.body;
   const { id } = request.params;
 
@@ -98,7 +85,7 @@ providersRouter.put('/:id', ensureAuthenticated, async (request, response) => {
   return response.json(service);
 });
 
-providersRouter.delete(
+servicesRouter.delete(
   '/:id',
   ensureAuthenticated,
   async (request, response) => {
