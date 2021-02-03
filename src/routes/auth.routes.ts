@@ -34,13 +34,12 @@ authRouter.post('/', async (request, response) => {
     email,
     password,
   });
-  if (admin) {
-    console.log('entrou');
+  if (admin.email) {
     const parsedAdmin: AdminWithoutPassword = admin;
     delete parsedAdmin.password;
     responseData = { admin: parsedAdmin, token: adminToken };
   }
-  if (admin.email === undefined) {
+  if (!admin.email) {
     const {
       provider,
       token: providerToken,
@@ -51,7 +50,6 @@ authRouter.post('/', async (request, response) => {
     const parsedProvider: ProviderWithoutPassword = provider;
     delete parsedProvider.password;
     responseData = { provider: parsedProvider, token: providerToken };
-    return response.json(responseData);
   }
   return response.json(responseData);
 });

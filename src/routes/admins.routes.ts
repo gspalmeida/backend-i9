@@ -1,10 +1,14 @@
 /* eslint-disable camelcase */
 import { Router } from 'express';
 import multer from 'multer';
+import { getRepository } from 'typeorm';
 import uploadConfig from '../config/upload';
+
+import ServiceType from '../models/ServiceType';
 
 import CreateAdminService from '../services/CreateAdminService';
 import CreateServiceTypeService from '../services/CreateServiceType';
+import UpdateServiceTypeService from '../services/UpdateServiceTypeService';
 import serviceTypesRouter from './serviceTypes.routes';
 
 interface AdminWithoutPassword {
@@ -30,8 +34,31 @@ serviceTypesRouter.post('/', async (request, response) => {
   return response.json(serviceType);
 });
 
+serviceTypesRouter.put('/:id', async (request, response) => {
+  const { id } = request.params;
+  const { name } = request.body;
+  console.log(name);
+
+  const updateServiceType = new UpdateServiceTypeService();
+
+  const service = await updateServiceType.execute({
+    id,
+    name,
+  });
+
+  return response.json(service);
+});
+
+serviceTypesRouter.delete('/:id', async (request, response) => {
+  const { id } = request.params;
+  const serviceTypeRepository = getRepository(ServiceType);
+
+  await serviceTypeRepository.delete(id);
+  response.sendStatus(200);
+});
+
 adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
-  console.log('entrou');
+  console.log('entrous');
 
   let avatar = '';
   const { name, email, password } = request.body;

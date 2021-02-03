@@ -19,7 +19,6 @@ providersRouter.get('/', ensureAuthenticated, async (request, response) => {
 
   const { startDate, endDate } = request.query;
 
-  console.log(request.query);
   services = await serviceRepository.find({
     where: { provider_id: request.user.id },
     relations: ['service'],
@@ -96,7 +95,7 @@ providersRouter.put('/:id', ensureAuthenticated, async (request, response) => {
     dueDate,
   });
 
-  response.json(service);
+  return response.json(service);
 });
 
 providersRouter.delete(
@@ -107,6 +106,6 @@ providersRouter.delete(
     const serviceRepository = getRepository(ProvidedService);
 
     await serviceRepository.delete(id);
-    response.sendStatus(200);
+    return response.sendStatus(200);
   },
 );
