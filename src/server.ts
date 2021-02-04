@@ -30,6 +30,6 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   });
 });
 
-app.listen(3333, () => {
-  console.log('Server Started on port 3333');
+app.listen(1919, () => {
+  console.log('Server Started on port 1919');
 });
