@@ -15,6 +15,7 @@ import servicesRouter from './services.routes';
 import CreateAdminService from '../services/CreateAdminService';
 import CreateServiceTypeService from '../services/CreateServiceType';
 import UpdateServiceTypeService from '../services/UpdateServiceTypeService';
+import UpdateProviderAprovalStatus from '../services/UpdateProviderAprovalStatus';
 import AppError from '../errors/AppError';
 
 interface AdminWithoutPassword {
@@ -105,8 +106,6 @@ servicesRouter.get('/all', async (request, response) => {
 });
 
 adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
-  console.log('entrous');
-
   let avatar = '';
   const { name, email, password } = request.body;
   if (request.file) {
@@ -146,16 +145,37 @@ adminsRouter.get('/providers', async (request, response) => {
 
 adminsRouter.put('/providers/:id', async (request, response) => {
   const { id } = request.params;
-  const { name } = request.body;
 
-  const updateServiceType = new UpdateServiceTypeService();
+  try {
+    const updateProvider = new UpdateProviderAprovalStatus();
+    const provider = await updateProvider.execute({
+      id,
+    });
+    return response.json(provider);
+  } catch (error) {
+    console.log(`Failed on update the provider with the error: ${error}`);
+    throw new AppError(
+      `Failed on update the provider with the error: ${error}`,
+      500,
+    );
+  }
+});
+adminsRouter.delete('/providers/:id', async (request, response) => {
+  const { id } = request.params;
+  const providerRepository = getRepository(Provider);
 
-  const service = await updateServiceType.execute({
-    id,
-    name,
-  });
-
-  return response.json(service);
+  try {
+    await providerRepository.update(
+      { id },
+      {
+        allow_access: false,
+        avaliated: 'NEGADO',
+      },
+    );
+  } catch (error) {
+    throw new AppError('Failed on Disaprove the requested provider');
+  }
+  response.sendStatus(200);
 });
 
 export default adminsRouter;
