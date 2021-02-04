@@ -19,7 +19,9 @@ class AuthenticateProviderService {
   public async execute({ email, password }: Request): Promise<Response> {
     const providerRepository = getRepository(Provider);
 
-    const provider = await providerRepository.findOne({ where: { email } });
+    const provider = await providerRepository.findOne({
+      where: { email },
+    });
     if (!provider) {
       throw new AppError('Incorrect email/password combination', 401);
     }
@@ -28,6 +30,10 @@ class AuthenticateProviderService {
 
     if (!passwordMatched) {
       throw new AppError('Incorrect email/password combination', 401);
+    }
+
+    if (provider.allow_access !== true) {
+      throw new AppError('The Admin didnt Approved your account yet', 403);
     }
 
     const { secret, expiresIn } = authConfig.jwt;

@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
+import { getRepository } from 'typeorm';
+import Admin from '../models/Admin';
+
 import AppError from '../errors/AppError';
 import authConfig from '../config/auth';
 
@@ -10,12 +13,13 @@ interface TokenPayload {
   sub: string;
 }
 
-export default function isAdmin(
+export default async function isAdmin(
   request: Request,
   response: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   const authHeader = request.headers.authorization;
+  const adminsRepository = getRepository(Admin);
   if (!authHeader) {
     throw new AppError('JWT token is missing!', 401);
   }
@@ -27,7 +31,9 @@ export default function isAdmin(
 
     const { sub: userId } = decoded as TokenPayload;
 
-    if (userId !== '7d1a9d59-517e-4340-afe3-fdcf99c3a45b') {
+    const admin = await adminsRepository.findOne({ where: { id: userId } });
+
+    if (!admin) {
       throw new AppError(
         'You dont have the credentials to access this route',
         401,
@@ -39,6 +45,8 @@ export default function isAdmin(
 
     return next();
   } catch {
+    console.log('primeiro try');
+
     throw new AppError('Invalid JWT token!', 401);
   }
 }
