@@ -25,7 +25,10 @@ class Provider {
   password: string;
 
   @Column()
-  aprovalStatus: boolean;
+  allow_access: boolean;
+
+  @Column()
+  avaliated: string;
 
   @CreateDateColumn()
   created_at: Date;
