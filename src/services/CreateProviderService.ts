@@ -33,7 +33,8 @@ class CreateProviderService {
       name,
       email,
       password: hashedPassword,
-      aprovalStatus: false,
+      allow_access: false,
+      avaliated: 'false',
       avatar,
     });
 

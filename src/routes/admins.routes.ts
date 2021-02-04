@@ -7,6 +7,7 @@ import uploadConfig from '../config/upload';
 
 import ServiceType from '../models/ServiceType';
 import ProvidedService from '../models/ProvidedService';
+import Provider from '../models/Provider';
 
 import serviceTypesRouter from './serviceTypes.routes';
 import servicesRouter from './services.routes';
@@ -14,6 +15,7 @@ import servicesRouter from './services.routes';
 import CreateAdminService from '../services/CreateAdminService';
 import CreateServiceTypeService from '../services/CreateServiceType';
 import UpdateServiceTypeService from '../services/UpdateServiceTypeService';
+import AppError from '../errors/AppError';
 
 interface AdminWithoutPassword {
   name: string;
@@ -25,6 +27,42 @@ const adminsRouter = Router();
 const upload = multer(uploadConfig);
 
 adminsRouter.use('/servicetypes', serviceTypesRouter);
+
+serviceTypesRouter.post('/', async (request, response) => {
+  const { serviceName } = request.body;
+
+  const createService = new CreateServiceTypeService();
+
+  const serviceType = await createService.execute({
+    serviceName,
+  });
+
+  return response.json(serviceType);
+});
+
+serviceTypesRouter.put('/:id', async (request, response) => {
+  const { id } = request.params;
+  const { name } = request.body;
+  console.log(name);
+
+  const updateServiceType = new UpdateServiceTypeService();
+
+  const service = await updateServiceType.execute({
+    id,
+    name,
+  });
+
+  return response.json(service);
+});
+
+serviceTypesRouter.delete('/:id', async (request, response) => {
+  const { id } = request.params;
+  const serviceTypeRepository = getRepository(ServiceType);
+
+  await serviceTypeRepository.delete(id);
+  response.sendStatus(200);
+});
+
 adminsRouter.use('/services', servicesRouter);
 
 servicesRouter.get('/all', async (request, response) => {
@@ -66,41 +104,6 @@ servicesRouter.get('/all', async (request, response) => {
   return response.json(services);
 });
 
-serviceTypesRouter.post('/', async (request, response) => {
-  const { serviceName } = request.body;
-
-  const createService = new CreateServiceTypeService();
-
-  const serviceType = await createService.execute({
-    serviceName,
-  });
-
-  return response.json(serviceType);
-});
-
-serviceTypesRouter.put('/:id', async (request, response) => {
-  const { id } = request.params;
-  const { name } = request.body;
-  console.log(name);
-
-  const updateServiceType = new UpdateServiceTypeService();
-
-  const service = await updateServiceType.execute({
-    id,
-    name,
-  });
-
-  return response.json(service);
-});
-
-serviceTypesRouter.delete('/:id', async (request, response) => {
-  const { id } = request.params;
-  const serviceTypeRepository = getRepository(ServiceType);
-
-  await serviceTypeRepository.delete(id);
-  response.sendStatus(200);
-});
-
 adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
   console.log('entrous');
 
@@ -123,4 +126,36 @@ adminsRouter.post('/', upload.single('avatar'), async (request, response) => {
 
   return response.json(admin);
 });
+
+adminsRouter.get('/providers', async (request, response) => {
+  let parsedProviders: Provider[];
+  const providersRepository = getRepository(Provider);
+  try {
+    const providers = await providersRepository.find();
+    parsedProviders = providers.filter(provider => {
+      if (provider.avaliated === 'false' && provider.allow_access === false) {
+        return true;
+      }
+      return false;
+    });
+    return response.json(parsedProviders);
+  } catch (error) {
+    throw new AppError('None providers found', 500);
+  }
+});
+
+adminsRouter.put('/providers/:id', async (request, response) => {
+  const { id } = request.params;
+  const { name } = request.body;
+
+  const updateServiceType = new UpdateServiceTypeService();
+
+  const service = await updateServiceType.execute({
+    id,
+    name,
+  });
+
+  return response.json(service);
+});
+
 export default adminsRouter;
