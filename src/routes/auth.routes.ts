@@ -17,10 +17,11 @@ interface ResponseData {
   provider?: ProviderWithoutPassword;
   token: string;
 }
-
 const authRouter = Router();
+console.log('Entrou auth');
 
 authRouter.post('/', async (request, response) => {
+  console.log('Entrou post');
   let responseData: ResponseData = {
     admin: {} as AdminWithoutPassword,
     provider: {} as ProviderWithoutPassword,

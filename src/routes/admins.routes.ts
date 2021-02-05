@@ -27,6 +27,8 @@ interface AdminWithoutPassword {
 const adminsRouter = Router();
 const upload = multer(uploadConfig);
 
+console.log('Entrou admin');
+
 adminsRouter.use('/servicetypes', serviceTypesRouter);
 
 serviceTypesRouter.post('/', async (request, response) => {
